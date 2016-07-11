@@ -5,12 +5,15 @@ package Shop;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import Shop.DBConnector;
+import Shop.Commands.Action;
+import Shop.Commands.AddToCartAction;
+import Shop.Commands.ViewCartAction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -29,6 +32,26 @@ import javax.servlet.http.HttpSession;
 @WebServlet(urlPatterns = {"/Products"})
 public class ProductsController extends HttpServlet {
 
+    private Map<String, Action> actionMap;
+    
+    private CartModel cart;
+
+    public ProductsController() {
+        this.actionMap = new HashMap<>();
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); //To change body of generated methods, choose Tools | Templates.
+        
+        actionMap.put("addToCart", new AddToCartAction());
+        actionMap.put("viewCart", new ViewCartAction(getServletContext()));
+    }
+    
+    
+
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,13 +68,11 @@ public class ProductsController extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        System.out.println(session.getId());
-
         DBConnector connector = null;
         List<Product> products = null;
-        CartModel cart = (CartModel) session.getAttribute("cart");
+        cart = (CartModel) session.getAttribute("cart");
         if (cart == null) {
-            cart = new CartModel();
+            cart = CartModel.getInstance();
             session.setAttribute("cart", cart);
         }
 
@@ -64,51 +85,57 @@ public class ProductsController extends HttpServlet {
 
         session.setAttribute("products", products);
 
-        String action = null;
+        String actionString = null;
+        
+        String actionKey = request.getParameter("action");
+        if (actionKey != null && !"".equals(actionKey)) {
+            Action action = actionMap.get(actionKey);
+            String view = action.execute(request, response);
+        }
 
         Enumeration<String> parameterNames = request.getParameterNames();
 
         if (request.getParameterNames().hasMoreElements()) {
-            action = request.getParameterNames().nextElement();
+            actionString = request.getParameterNames().nextElement();
         }
-        if (action == null) {
-            action = null;
+        if (actionString == null) {
+            actionString = null;
         } else {
-            System.out.println(action);
+            System.out.println(actionString);
             System.out.println(session.getServletContext().getContextPath());
         }
-        if ("viewCart".equals(action)) {
-            url = "/WEB-INF/View/Cart.jsp";
-            session.setAttribute("cart", cart);
-        }
-        if ("backToProducts".equals(action)) {
+//        if ("viewCart".equals(actionString)) {
+//            url = "/WEB-INF/View/Cart.jsp";
+//            session.setAttribute("cart", cart);
+//        }
+        if ("backToProducts".equals(actionString)) {
             url = "/WEB-INF/View/Products.jsp";
         }
-        if (action != null && action.startsWith("addToCart")) {
-            action = action.replace("addToCart", "");
-            int selectedNumber = Integer.parseInt(action);
-
-            if (products.stream().anyMatch((Product prod) -> prod.getNumber() == selectedNumber)) {
-                Optional<Product> product = products.stream().filter((Product prod) -> prod.getNumber() == selectedNumber).findFirst();
-                if (product == null) {
-                    throw new NullPointerException();
-                }
-                if (product.get().getStock() > 0){
-                    cart.AddCartEntry(product.get(), 1);
-                }
-            }
-        }
-        if (action != null && action.startsWith("detail")) {
-            action = action.replace("detail_", "");
-            action = action.replace(".x", "");
-            int productId = Integer.parseInt(action);
+//        if (actionString != null && actionString.startsWith("addToCart")) {
+//            actionString = actionString.replace("addToCart", "");
+//            int selectedNumber = Integer.parseInt(actionString);
+//
+//            if (products.stream().anyMatch((Product prod) -> prod.getNumber() == selectedNumber)) {
+//                Optional<Product> product = products.stream().filter((Product prod) -> prod.getNumber() == selectedNumber).findFirst();
+//                if (product == null) {
+//                    throw new NullPointerException();
+//                }
+//                if (product.get().getStock() > 0){
+//                    cart.AddCartEntry(product.get(), 1);
+//                }
+//            }
+//        }
+        if (actionString != null && actionString.startsWith("detail")) {
+            actionString = actionString.replace("detail_", "");
+            actionString = actionString.replace(".x", "");
+            int productId = Integer.parseInt(actionString);
             session.setAttribute("product", (Product) products.stream().filter((Product p) -> p.getNumber() == productId).findFirst().get());
             url = "/WEB-INF/View/Details.jsp";
         }
-        if (action != null && action.startsWith("deleteEntry")) {
-            action = action.replace("deleteEntry_", "");
-            action = action.replace(".x", "");
-            int entryId = Integer.parseInt(action);
+        if (actionString != null && actionString.startsWith("deleteEntry")) {
+            actionString = actionString.replace("deleteEntry_", "");
+            actionString = actionString.replace(".x", "");
+            int entryId = Integer.parseInt(actionString);
             ArrayList<CartEntry> tempList = cart.getCartEntries();
             for (CartEntry entry : tempList) {
                 if (entry.getId() != entryId){

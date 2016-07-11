@@ -34,6 +34,7 @@ and open the template in the editor.
     height: 50px;
     background-image: url("../img/shopcarticon.png");
     background-color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0);
 }
 
 .background {
@@ -47,6 +48,7 @@ and open the template in the editor.
     height: 20px;
     background-image: url("../img/addToCart.png");
     background-color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0);
 }
 
 #container {

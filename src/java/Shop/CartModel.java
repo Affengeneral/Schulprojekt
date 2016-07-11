@@ -11,30 +11,37 @@ package Shop;
 
 import java.util.ArrayList;
 
-public class CartModel{
+public class CartModel {
 
     private ArrayList<CartEntry> cartEntries;
+    private static CartModel instance;
 
-    public CartModel() {
+    private CartModel() {
         cartEntries = new ArrayList<>();
     }
 
+    public static CartModel getInstance() {
+        if (instance == null) {
+            instance = new CartModel();
+        }
+        return instance;
+    }
+
     public void AddCartEntry(Product product, int count) throws Exception {
-        if (count < 1){
+        if (count < 1) {
             throw new Exception();
         }
-        
+
         if (getCartEntries().stream().noneMatch((CartEntry entry) -> entry.getProduct().equals(product))) {
             getCartEntries().add(new CartEntry(getCartEntries().size(), product, count));
-        }
-        else{
+        } else {
             getCartEntries().stream().filter((cartEntry) -> (cartEntry.getProduct().equals(product))).forEach((cartEntry) -> {
                 cartEntry.setCount(cartEntry.getCount() + 1);
             });
         }
     }
-    
-    public double getSum(){
+
+    public double getSum() {
         double sum = 0;
         for (CartEntry cartEntry : getCartEntries()) {
             sum = sum + cartEntry.getSum();

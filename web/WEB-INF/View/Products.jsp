@@ -15,11 +15,11 @@
     </head>
     <body class="background">
         <div class="center">
-            <h1 class="headerTitle"><b><u>Der Blucmenladen</u></b></h1>
+            <h1 class="headerTitle"><b><u>Der Blumenladen</u></b></h1>
             <div style="height: 60px;">
                 <div style="display: inline-block; float: right">
                     <form method="POST" action="Products">
-                        <input type="submit" name="viewCart" class="shopcartbutton" value=""/>
+                        <input type="submit" name="action" class="shopcartbutton" value="viewCart"/>
                     </form>
                 </div>
             </div>

@@ -33,16 +33,19 @@
             <div id="footer">
                 <div style='display: inline-block; float: left; text-align: left'>Auf Lager: ${product.stock}</div>
                 <div style='display: inline-block; float: right; text-align: right'>
-                    <form method="POST" action="Products">
+                    <form method="POST" action="Products" >
                         <table>
                             <tr>
-                                <td>${product.price}</td>
-                                <td><input type="submit" name="addToCart${product.number}" class="addtocartbutton" value=""></td>
+                                <td>${product.price}</td>                                
+                                <td>
+                                    <input type="hidden" name="productId" value="${product.number}" >
+                                    <input type="submit" name="action" class="addtocartbutton" value="addToCart"></td>
                             </tr>
                         </table>
                     </form>
                 </div>
             </div>
         </div>
+        <c:out value="${pageContext.request.queryString}" />
     </body>
 </html>
