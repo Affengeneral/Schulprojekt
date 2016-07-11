@@ -80,7 +80,7 @@ public class ProductsController extends HttpServlet {
             connector = new DBConnector();
         }
         if (products == null) {
-            products = connector.GetResult();
+            products = connector.getResult();
         }
 
         session.setAttribute("products", products);

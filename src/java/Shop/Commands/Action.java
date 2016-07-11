@@ -21,7 +21,7 @@ public abstract class Action {
     
     public Action() {
         if (products == null) {
-            products = new DBConnector().GetResult();
+            products = new DBConnector().getResult();
         }
     }
 
