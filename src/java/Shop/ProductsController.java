@@ -136,6 +136,7 @@ public class ProductsController extends HttpServlet {
             actionString = actionString.replace("deleteEntry_", "");
             actionString = actionString.replace(".x", "");
             int entryId = Integer.parseInt(actionString);
+            
             ArrayList<CartEntry> tempList = cart.getCartEntries();
             for (CartEntry entry : tempList) {
                 if (entry.getId() != entryId){

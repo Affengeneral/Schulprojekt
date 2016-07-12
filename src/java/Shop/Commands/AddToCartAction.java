@@ -6,7 +6,9 @@
 package Shop.Commands;
 
 import Shop.CartModel;
+import Shop.DBConnector;
 import Shop.Product;
+import java.sql.SQLException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,12 +18,15 @@ import javax.servlet.http.HttpServletResponse;
  * @author spitzmessera
  */
 public class AddToCartAction extends Action{
-
+    
+    static int accessCount;
+    
     CartModel cartModel;
 
     public AddToCartAction() {
         super();
         this.cartModel = CartModel.getInstance();
+        accessCount = 0;
     }
 
     @Override
@@ -34,11 +39,14 @@ public class AddToCartAction extends Action{
             if (product == null) {
                 throw new NullPointerException();
             }
+            int stock = product.get().getStock();
             if (product.get().getStock() > 0) {
                 try {
                     cartModel.AddCartEntry(product.get(), 1);
-                    product.get().setStock(product.get().getStock() - 1);
+                    product.get().setStock(stock - 1);
                     
+                    DBConnector.getInstance().updateProduct(selectedNumber, "stockcount", stock - 1);
+                    System.out.println(accessCount++);
                     response.sendRedirect(request.getContextPath() + "/Controller");
                     return "succes";
                 } catch (Exception ex) {

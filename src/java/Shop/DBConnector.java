@@ -53,11 +53,11 @@ public class DBConnector {
         }
     }
     
-    public boolean updateProduct(int productId, String column, Object value) throws SQLException{
-        String updateQuery = String.format("UPDATE products SET %s = %s WHERE id_product = %d", productId, column, value);
+    public void updateProduct(int productId, String column, Object value) throws SQLException{
+        String updateQuery = String.format("UPDATE product SET %s = %s WHERE id_product = %d", column, value, productId);
         
         Statement statement = connection.createStatement();
-        return statement.execute(updateQuery);        
+        statement.execute(updateQuery);        
     }
 
     public List<Product> getResult() throws SQLException {

@@ -19,7 +19,7 @@
                 <input type="submit" id="backToProductsButton" name="backToProducts" value="<-- Zurück" />
             </form>
             <h1 class="headerTitle" ><b><u>${product.name}</u></b></h1>
-            <div style="background-color: rgba(255,255,255,0.7);">${product.description}</div>
+            <div style="background-color: rgba(255,255,255,0.7); text-align: justify;">${product.description}</div>
         </div>
     </body>
 </html>
