@@ -4,6 +4,7 @@
     Author     : Alex
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -36,9 +37,11 @@
                     <form method="POST" action="Products" >
                         <table>
                             <tr>
-                                <td>${product.price}</td>                                
                                 <td>
-                                    <input type="hidden" name="productId" value="${product.number}" >
+                                    <fmt:formatNumber type="currency" value="${product.price}" currencySymbol="€" ></fmt:formatNumber>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="productId" value="${product.number}" >
                                     <input type="submit" name="action" class="addtocartbutton" value="addToCart"></td>
                             </tr>
                         </table>

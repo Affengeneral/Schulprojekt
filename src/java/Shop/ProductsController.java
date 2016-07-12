@@ -77,7 +77,7 @@ public class ProductsController extends HttpServlet {
         }
 
         if (connector == null) {
-            connector = new DBConnector();
+            connector = DBConnector.getInstance();
         }
         if (products == null) {
             products = connector.getResult();

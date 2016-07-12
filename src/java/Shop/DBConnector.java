@@ -7,6 +7,7 @@ package Shop;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,13 +22,27 @@ import java.util.logging.Logger;
  */
 public class DBConnector {
 
+    private static DBConnector instance;
+    
     private Connection connection;
-    String selectQuery = "SELECT * FROM product";
+    private PreparedStatement selectQuery;
 
-    public DBConnector() {
+    private DBConnector() {
         InitConnection();
+        try {
+            selectQuery = connection.prepareStatement("SELECT * FROM product");
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
+    
+    public static DBConnector getInstance(){
+        if (instance == null){
+            instance = new DBConnector();
+        }
+        return instance;
+    }
+    
     private void InitConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -37,21 +52,27 @@ public class DBConnector {
             Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public boolean updateProduct(int productId, String column, Object value) throws SQLException{
+        String updateQuery = String.format("UPDATE products SET %s = %s WHERE id_product = %d", productId, column, value);
+        
+        Statement statement = connection.createStatement();
+        return statement.execute(updateQuery);        
+    }
 
     public List<Product> getResult() throws SQLException {
         if (!connection.isValid(0)) {
             InitConnection();
         }
-        Statement statement = connection.createStatement();
 
-        if (!statement.execute(selectQuery)) {
+        if (!selectQuery.execute()) {
             throw new SQLException();
         }
-        ResultSet resultSet = statement.getResultSet();
+        ResultSet resultSet = selectQuery.getResultSet();
 
         List<Product> products = new ArrayList<>();
         while (resultSet.next()) {
-            products.add(new Product(resultSet.getInt(0), resultSet.getString(2), resultSet.getString(4), resultSet.getFloat(1), resultSet.getString(3), resultSet.getString(5), resultSet.getInt(6)));
+            products.add(new Product(resultSet.getInt(1), resultSet.getString(3), resultSet.getString(5), resultSet.getFloat(2), resultSet.getString(4), resultSet.getString(6), resultSet.getInt(7)));
         }
         return products;
     }

@@ -7,7 +7,10 @@ package Shop.Commands;
 
 import Shop.DBConnector;
 import Shop.Product;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,7 +24,11 @@ public abstract class Action {
     
     public Action() {
         if (products == null) {
-            products = new DBConnector().getResult();
+            try {
+                products = DBConnector.getInstance().getResult();
+            } catch (SQLException ex) {
+                Logger.getLogger(Action.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

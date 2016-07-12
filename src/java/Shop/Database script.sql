@@ -8,6 +8,10 @@
  * Created: 11.07.2016
  */
 
+drop database if exists webshop;
+
+create database webshop;
+
 drop table if exists product;
 
 create table product (
