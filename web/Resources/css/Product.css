@@ -89,6 +89,8 @@ and open the template in the editor.
     /*    line-height:30px;*/
     height:100%;
     width:15%;
+    max-width: 15%;
+    max-height: 100%;
     float:left;
     padding: 5px;
 }

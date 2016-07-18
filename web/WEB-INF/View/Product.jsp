@@ -22,8 +22,10 @@
             </div>
 
             <div id="picture">
-                <form method="POST" id="pictureForm">
-                    <input type="image" src="${product.pictureName}" name="detail_${product.number}" />
+                <form method="GET" id="pictureForm">
+                    <input type="hidden" name="productId" value="${product.number}" />
+                    <input type="hidden" name="action" value="details" />
+                    <input type="image" src="${product.pictureName}" height="100%" width="100%" />
                 </form>
             </div>
 

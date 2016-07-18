@@ -12,7 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,9 +60,43 @@ public class DBConnector {
         String updateQuery = String.format("UPDATE product SET %s = %s WHERE id_product = %d", column, value, productId);
         
         Statement statement = connection.createStatement();
-        statement.execute(updateQuery);        
+        statement.execute(updateQuery);
     }
 
+    public List<Product> getFilteredResult(String[] columns, HashMap<String, String> filters) throws SQLException{
+        if (!connection.isValid(0)){
+            InitConnection();
+        }
+        
+        String selectPart = "";
+        for (String column : columns) {
+            selectPart = selectPart + "," + column;
+        }
+        selectPart = selectPart.substring(1);
+        
+        String filterPart = "";
+        if (!filters.isEmpty()){
+            filterPart = "WHERE ";
+            for (Map.Entry<String, String> filter : filters.entrySet()){
+                filterPart = filterPart + filter.getKey() + "=" + filter.getValue() + " AND ";
+            }
+            filterPart = filterPart.substring(0, filterPart.length() - 4);
+        }
+        
+        String query = "SELECT " + selectPart + " FROM product " + filterPart;
+        System.out.println(query);
+        Statement statement = connection.createStatement();
+        statement.execute(query);
+        ResultSet resultSet = statement.getResultSet();
+        
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
+            products.add(new Product(resultSet.getInt(1), resultSet.getString(3), resultSet.getString(5), resultSet.getFloat(2), resultSet.getString(4), resultSet.getString(6), resultSet.getInt(7)));
+        }
+        
+        return products;
+    }
+    
     public List<Product> getResult() throws SQLException {
         if (!connection.isValid(0)) {
             InitConnection();

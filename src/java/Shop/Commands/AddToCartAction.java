@@ -9,7 +9,10 @@ import Shop.CartModel;
 import Shop.DBConnector;
 import Shop.Product;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,44 +20,39 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author spitzmessera
  */
-public class AddToCartAction extends Action{
-    
-    static int accessCount;
-    
-    CartModel cartModel;
-
-    public AddToCartAction() {
-        super();
-        this.cartModel = CartModel.getInstance();
-        accessCount = 0;
-    }
+public class AddToCartAction extends Action {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String idString = request.getParameter("productId");
-        int selectedNumber = Integer.parseInt(idString);
+        try {
+            String idString = request.getParameter("productId");
 
-        if (products.stream().anyMatch((Product prod) -> prod.getNumber() == selectedNumber)) {
-            Optional<Product> product = products.stream().filter((Product prod) -> prod.getNumber() == selectedNumber).findFirst();
+            HashMap<String, String> filters = new HashMap<>();
+            filters.put("id_product", idString);
+
+            List<Product> products = DBConnector.getInstance().getFilteredResult(new String[]{"*"}, filters);
+
+            Product product = products.get(0);
             if (product == null) {
                 throw new NullPointerException();
             }
-            int stock = product.get().getStock();
-            if (product.get().getStock() > 0) {
+            int stockCount = product.getStock();
+            if (stockCount > 0) {
                 try {
-                    cartModel.AddCartEntry(product.get(), 1);
-                    product.get().setStock(stock - 1);
-                    
-                    DBConnector.getInstance().updateProduct(selectedNumber, "stockcount", stock - 1);
-                    System.out.println(accessCount++);
-                    response.sendRedirect(request.getContextPath() + "/Controller");
-                    return "succes";
+                    CartModel.getInstance().AddCartEntry(product, 1);
+//                        product.setStock(stockCount - 1);
+//
+//                        DBConnector.getInstance().updateProduct(selectedNumber, "stockcount", stockCount - 1);
+
+                    return "/WEB-INF/View/Test.jsp";
                 } catch (Exception ex) {
                     request.setAttribute("errorMessage", ex.getMessage());
-                    return "failure";
+                    return "/WEB-INF/View/Products.jsp";
                 }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddToCartAction.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "failure";
+        return "/WEB-INF/View/Products.jsp";
     }
 }

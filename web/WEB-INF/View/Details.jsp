@@ -15,7 +15,8 @@
     </head>
     <body class="background">
         <div class="center">
-            <form method="POST">
+            <form method="GET">
+                <input type="hidden" name="action" value="backToProducts" />
                 <input type="submit" id="backToProductsButton" name="backToProducts" value="<-- Zurück" />
             </form>
             <h1 class="headerTitle" ><b><u>${product.name}</u></b></h1>

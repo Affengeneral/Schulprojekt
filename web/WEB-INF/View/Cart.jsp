@@ -4,6 +4,7 @@
     Author     : Alex
 --%>
 
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -28,7 +29,7 @@
                         <td>${entry.id}</td>
                         <td>${entry.product.name}</td>
                         <td>${entry.count}</td>
-                        <td>${entry.sum} €</td>
+                        <td><fmt:formatNumber type="currency" value="${entry.sum}" currencySymbol="€" ></fmt:formatNumber></td>
                         <td style="width: 16px; height: 16px;">
                             <form method="POST" id="pictureForm">
                                 <input type="image" style="width: 16px; height: 16px;" src="Resources/img/deleteButton.png" name="deleteEntry_${entry.id}" />
@@ -43,8 +44,8 @@
             </table>
 
             <div>
-                <form method="POST">
-                    <button type="submit" id="backToProductsButton" name="backToProducts">Zurück</button>
+                <form method="GET" >
+                    <button type="submit" id="backToProductsButton" name="action">Zurück</button>
                 </form>
             </div>
         </div>
