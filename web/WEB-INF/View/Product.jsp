@@ -35,6 +35,7 @@
 
             <div id="footer">
                 <div style='display: inline-block; float: left; text-align: left'>Auf Lager: ${product.stock}</div>
+                <div style="display: inline-block; float: left; text-align: left; margin-left: 10px">Bestellt: ${product.ordered}</div>
                 <div style='display: inline-block; float: right; text-align: right'>
                     <form method="POST" action="Products" >
                         <table>
@@ -44,7 +45,7 @@
                                     </td>
                                     <td>
                                         <input type="hidden" name="productId" value="${product.number}" >
-                                    <input type="submit" name="action" class="addtocartbutton" value="addToCart"></td>
+                                    <input type="submit" name="action" class="addtocartbutton" value="addToCart" ${notAvailable == product.number ? "disabled='True'" : ''}></td>
                             </tr>
                         </table>
                     </form>

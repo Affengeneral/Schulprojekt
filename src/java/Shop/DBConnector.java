@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -33,7 +32,7 @@ public class DBConnector {
     private DBConnector() {
         InitConnection();
         try {
-            selectQuery = connection.prepareStatement("SELECT * FROM product");
+            selectQuery = connection.prepareStatement("SELECT * FROM product ORDER BY id_product");
         } catch (SQLException ex) {
             Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -83,7 +82,7 @@ public class DBConnector {
             filterPart = filterPart.substring(0, filterPart.length() - 4);
         }
         
-        String query = "SELECT " + selectPart + " FROM product " + filterPart;
+        String query = "SELECT " + selectPart + " FROM product " + filterPart + " ORDER BY id_product";
         System.out.println(query);
         Statement statement = connection.createStatement();
         statement.execute(query);

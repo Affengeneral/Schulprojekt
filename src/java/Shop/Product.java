@@ -1,6 +1,7 @@
 package Shop;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -149,5 +150,13 @@ public class Product implements Serializable{
      */
     public void setPictureName(String pictureName) {
         this.pictureName = pictureName;
+    }
+    
+    public int getOrdered(){
+        Optional<CartEntry> cartEntry = CartModel.getInstance().getCartEntries().stream().filter((CartEntry entry) -> entry.getProduct().getNumber() == this.number).findFirst();
+        if (!cartEntry.isPresent()){
+            return 0;
+        }
+        return cartEntry.get().getCount();
     }
 }

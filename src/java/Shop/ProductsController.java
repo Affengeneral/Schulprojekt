@@ -11,17 +11,15 @@ import Shop.Commands.AddToCartAction;
 import Shop.Commands.BackToProductsAction;
 import Shop.Commands.ClearFilterAction;
 import Shop.Commands.FilterAction;
+import Shop.Commands.RemoveCartEntryAction;
 import Shop.Commands.ViewCartAction;
 import Shop.Commands.ViewDetailsAction;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -56,6 +54,7 @@ public class ProductsController extends HttpServlet {
         actionMap.put("backToProducts", new BackToProductsAction());
         actionMap.put("Filter", new FilterAction());
         actionMap.put("Filter löschen", new ClearFilterAction());
+        actionMap.put("removeCartEntry", new RemoveCartEntryAction());
     }
 
     /**
@@ -93,71 +92,12 @@ public class ProductsController extends HttpServlet {
         
         session.setAttribute("products", products);
 
-        String actionString = null;
-
         String actionKey = request.getParameter("action");
         if (actionKey != null && !"".equals(actionKey)) {
             Action action = actionMap.get(actionKey);
             url = action.execute(request, response);
         }
-
-//        Enumeration<String> parameterNames = request.getParameterNames();
-//
-//        if (request.getParameterNames().hasMoreElements()) {
-//            actionString = request.getParameterNames().nextElement();
-//        }
-//        if (actionString == null) {
-//            actionString = null;
-//        } else {
-//            System.out.println(actionString);
-//            System.out.println(session.getServletContext().getContextPath());
-//        }
-////        if ("viewCart".equals(actionString)) {
-////            url = "/WEB-INF/View/Cart.jsp";
-////            session.setAttribute("cart", cart);
-////        }
-//        if ("backToProducts".equals(actionString)) {
-//            url = "/WEB-INF/View/Products.jsp";
-//        }
-////        if (actionString != null && actionString.startsWith("addToCart")) {
-////            actionString = actionString.replace("addToCart", "");
-////            int selectedNumber = Integer.parseInt(actionString);
-////
-////            if (products.stream().anyMatch((Product prod) -> prod.getNumber() == selectedNumber)) {
-////                Optional<Product> product = products.stream().filter((Product prod) -> prod.getNumber() == selectedNumber).findFirst();
-////                if (product == null) {
-////                    throw new NullPointerException();
-////                }
-////                if (product.get().getStock() > 0){
-////                    cart.AddCartEntry(product.get(), 1);
-////                }
-////            }
-////        }
-//        if (actionString != null && actionString.startsWith("detail")) {
-//            actionString = actionString.replace("detail_", "");
-//            actionString = actionString.replace(".x", "");
-//            int productId = Integer.parseInt(actionString);
-//            session.setAttribute("product", (Product) products.stream().filter((Product p) -> p.getNumber() == productId).findFirst().get());
-//            url = "/WEB-INF/View/Details.jsp";
-//        }
-//        if (actionString != null && actionString.startsWith("deleteEntry")) {
-//            actionString = actionString.replace("deleteEntry_", "");
-//            actionString = actionString.replace(".x", "");
-//            int entryId = Integer.parseInt(actionString);
-//            
-//            ArrayList<CartEntry> tempList = cart.getCartEntries();
-//            for (CartEntry entry : tempList) {
-//                if (entry.getId() != entryId){
-//                    continue;
-//                }
-//                if (entry.getCount() > 1) {
-//                    entry.setCount(entry.getCount() - 1);
-//                } else {
-//                    cart.getCartEntries().remove(entryId);
-//                }
-//            }
-//            url = "/WEB-INF/View/Cart.jsp";
-//        }
+        
         ServletContext sc = this.getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);

@@ -30,16 +30,18 @@
                         <td>${entry.product.name}</td>
                         <td>${entry.count}</td>
                         <td><fmt:formatNumber type="currency" value="${entry.sum}" currencySymbol="€" ></fmt:formatNumber></td>
-                        <td style="width: 16px; height: 16px;">
-                            <form method="POST" id="pictureForm">
-                                <input type="image" style="width: 16px; height: 16px;" src="Resources/img/deleteButton.png" name="deleteEntry_${entry.id}" />
+                            <td style="width: 16px; height: 16px;">
+                                <form method="GET" id="pictureForm">
+                                    <input type="hidden" name="entryToRemove" value="${entry.id}">
+                                <input type="hidden"  name="action" value="removeCartEntry">
+                                <input type="image" style="width: 16px; height: 16px; color: rgba(255,255,255,0);" src="Resources/img/deleteButton.png" />
                             </form>
                         </td>
                     </tr>
                 </c:forEach>
                 <tr>
                     <td colspan="3">Summe:</td>
-                    <td>${cart.sum}</td>
+                    <td><fmt:formatNumber type="currency" value="${cart.sum}" currencySymbol="€"></fmt:formatNumber></td>
                 </tr>
             </table>
 

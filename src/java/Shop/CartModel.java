@@ -10,6 +10,7 @@
 package Shop;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class CartModel {
 
@@ -61,5 +62,10 @@ public class CartModel {
      */
     public void setCartEntries(ArrayList<CartEntry> cartEntries) {
         this.cartEntries = cartEntries;
+    }
+
+    public CartEntry getEntryById(int id) {
+        Optional<CartEntry> findFirst = this.cartEntries.stream().filter(entry -> entry.getId() == id).findFirst();
+        return findFirst.isPresent() ? findFirst.get() : null;
     }
 }
