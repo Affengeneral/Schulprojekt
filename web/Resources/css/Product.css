@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 @font-face {
     font-family: 'headerFont';
-    src: url('../fonts/AdineKirnberg-Script.ttf') format('truetype');
+    src: url('../fonts/Angelface.otf') format('truetype');
 }
 
 .headerTitle {

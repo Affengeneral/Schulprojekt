@@ -5,7 +5,6 @@ package Shop;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import Shop.Commands.Action;
 import Shop.Commands.AddToCartAction;
 import Shop.Commands.BackToProductsAction;
@@ -15,9 +14,14 @@ import Shop.Commands.RemoveCartEntryAction;
 import Shop.Commands.ViewCartAction;
 import Shop.Commands.ViewDetailsAction;
 import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -87,9 +91,11 @@ public class ProductsController extends HttpServlet {
         if (products == null) {
             products = connector.getResult();
         }
-        
-        session.setAttribute("productsFilter", DBConnector.getInstance().getResult());
-        
+
+        List<Product> source = DBConnector.getInstance().getDistinctBy("manufacturer");
+
+        session.setAttribute("productsFilter", source);
+
         session.setAttribute("products", products);
 
         String actionKey = request.getParameter("action");
@@ -97,7 +103,7 @@ public class ProductsController extends HttpServlet {
             Action action = actionMap.get(actionKey);
             url = action.execute(request, response);
         }
-        
+
         ServletContext sc = this.getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);

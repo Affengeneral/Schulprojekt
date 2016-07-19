@@ -27,7 +27,7 @@
             <form method="GET">
                 <select name="selectedProducer" >
                     <c:forEach var="product" items="${productsFilter}">
-                        <option value="${product.number}" ${product.number == selectedFilterOption ? 'selected' : ''}>${product.manufacturer}</option>
+                        <option value="${product.number}" ${selectedFilterOption == product.manufacturer ? 'selected' : ''}>${product.manufacturer}</option>
                     </c:forEach>
                     <input type="submit" name="action" value="Filter">
                     <input type="submit" name="action" value="Filter löschen" >

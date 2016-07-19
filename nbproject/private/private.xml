@@ -5,10 +5,8 @@
         <group>
             <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/src/java/Shop/Database%20script.sql</file>
             <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/src/java/Shop/Commands/FilterAction.java</file>
-            <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/web/Resources/css/Product.css</file>
-            <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/web/WEB-INF/View/Products.jsp</file>
             <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/src/java/Shop/ProductsController.java</file>
-            <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/web/WEB-INF/View/Product.jsp</file>
+            <file>file:/C:/Users/spitzmessera/Desktop/Repos/Schulprojekt/Schulprojekt/src/java/Shop/DBConnector.java</file>
         </group>
     </open-files>
 </project-private>

@@ -28,19 +28,16 @@ public class FilterAction extends Action {
         System.out.println(selectedProducer);
 
         HashMap<String, String> filters = new HashMap<>();
-        filters.put("id_product", selectedProducer);
+        filters.put("manufacturer", "(select manufacturer from product where id_product=" + selectedProducer +")");
         List<Product> products = new ArrayList<>();
         try {
             products = DBConnector.getInstance().getFilteredResult(new String[]{"*"}, filters);
         } catch (SQLException ex) {
             Logger.getLogger(FilterAction.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Product product : products) {
-            System.out.println(product.getNumber());
-        }
         request.setAttribute("products", products);
 
-        request.setAttribute("selectedFilterOprion", selectedProducer);
+        request.setAttribute("selectedFilterOption", products.stream().findFirst().get().getManufacturer());
         return "/WEB-INF/View/Products.jsp";
     }
 }

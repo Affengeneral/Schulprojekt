@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class DBConnector {
 
     private static DBConnector instance;
-    
+
     private Connection connection;
     private PreparedStatement selectQuery;
 
@@ -37,14 +37,14 @@ public class DBConnector {
             Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static DBConnector getInstance(){
-        if (instance == null){
+
+    public static DBConnector getInstance() {
+        if (instance == null) {
             instance = new DBConnector();
         }
         return instance;
     }
-    
+
     private void InitConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -54,48 +54,99 @@ public class DBConnector {
             Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void updateProduct(int productId, String column, Object value) throws SQLException{
+
+    public void updateProduct(int productId, String column, Object value) throws SQLException {
         String updateQuery = String.format("UPDATE product SET %s = %s WHERE id_product = %d", column, value, productId);
-        
+
         Statement statement = connection.createStatement();
         statement.execute(updateQuery);
     }
 
-    public List<Product> getFilteredResult(String[] columns, HashMap<String, String> filters) throws SQLException{
-        if (!connection.isValid(0)){
+    public List<Product> getFilteredResult(String[] columns, HashMap<String, String> filters) throws SQLException {
+        if (!connection.isValid(0)) {
+            InitConnection();
+        }
+
+        String query = constructQuery(columns, filters, null);
+
+        System.out.println(query);
+        Statement statement = connection.createStatement();
+        statement.execute(query);
+        ResultSet resultSet = statement.getResultSet();
+
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
+            products.add(new Product(resultSet.getInt(1), resultSet.getString(3), resultSet.getString(5), resultSet.getFloat(2), resultSet.getString(4), resultSet.getString(6), resultSet.getInt(7)));
+        }
+
+        return products;
+    }
+
+    public List<Product> getFilteredResult(String[] columns, HashMap<String, String> filters, String group) throws SQLException {
+        if (!connection.isValid(0)) {
+            InitConnection();
+        }
+
+        String query = constructQuery(columns, filters, group);
+
+        Statement statement = connection.createStatement();
+        statement.execute(query);
+        ResultSet resultSet = statement.getResultSet();
+
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
+            products.add(new Product(resultSet.getInt(1), resultSet.getString(3), resultSet.getString(5), resultSet.getFloat(2), resultSet.getString(4), resultSet.getString(6), resultSet.getInt(7)));
+        }
+
+        return products;
+    }
+    
+    public List<Product> getDistinctBy(String distinctColumn) throws SQLException{
+        if (!connection.isValid(0))        {
             InitConnection();
         }
         
-        String selectPart = "";
-        for (String column : columns) {
-            selectPart = selectPart + "," + column;
-        }
-        selectPart = selectPart.substring(1);
+        String query  = "with dist as (select *, ROW_NUMBER() over (partition by " + distinctColumn + " order by id_product) as occ from product ) select * from dist where occ = 1";
         
-        String filterPart = "";
-        if (!filters.isEmpty()){
-            filterPart = "WHERE ";
-            for (Map.Entry<String, String> filter : filters.entrySet()){
-                filterPart = filterPart + filter.getKey() + "=" + filter.getValue() + " AND ";
-            }
-            filterPart = filterPart.substring(0, filterPart.length() - 4);
-        }
-        
-        String query = "SELECT " + selectPart + " FROM product " + filterPart + " ORDER BY id_product";
-        System.out.println(query);
         Statement statement = connection.createStatement();
         statement.execute(query);
         ResultSet resultSet = statement.getResultSet();
         
         List<Product> products = new ArrayList<>();
-        while (resultSet.next()) {
+        while (resultSet.next()){
             products.add(new Product(resultSet.getInt(1), resultSet.getString(3), resultSet.getString(5), resultSet.getFloat(2), resultSet.getString(4), resultSet.getString(6), resultSet.getInt(7)));
         }
         
         return products;
     }
     
+    private String constructQuery(String[] columns, HashMap<String, String> filters, String group) {
+        String selectPart = "";
+        for (String column : columns) {
+            selectPart = selectPart + "," + column;
+        }
+        selectPart = selectPart.substring(1);
+
+        String filterPart = "";
+        if (filters == null){
+            filterPart = "WHERE 1=1 ";
+        }
+        else if (!filters.isEmpty()) {
+            filterPart = "WHERE ";
+            for (Map.Entry<String, String> filter : filters.entrySet()) {
+                filterPart = filterPart + filter.getKey() + "=" + filter.getValue() + " AND ";
+            }
+            filterPart = filterPart.substring(0, filterPart.length() - 4);
+        }
+
+        String groupPart = "";
+        if (group != null) {
+            groupPart = "GROUP BY " + group;
+        }
+
+        return "SELECT " + selectPart + " FROM product " + filterPart + groupPart + (group != null ? "" : " ORDER BY id_product");
+    }
+
     public List<Product> getResult() throws SQLException {
         if (!connection.isValid(0)) {
             InitConnection();
